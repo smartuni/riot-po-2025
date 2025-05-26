@@ -44,7 +44,7 @@ server/
 Example:
 
 git fetch origin
-git checkout backend7server
+git checkout backend/server
 git pull
 
 git checkout -b add-auth-module/backend/server
