@@ -557,6 +557,173 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "FeatherSense_JoyButton:08184_SparkFunk"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "08184_SparkFunk_0_1"
+				(rectangle
+					(start -6.35 1.27)
+					(end 6.35 -5.08)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -6.35 1.27) (xy -5.08 3.81) (xy -3.81 5.08) (xy -1.27 6.35) (xy 0 6.35) (xy 1.27 6.35) (xy 3.81 5.08)
+						(xy 5.08 3.81) (xy 6.35 1.27) (xy -6.35 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "08184_SparkFunk_1_1"
+				(pin input line
+					(at -8.89 0 0)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at -3.81 -7.62 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 0 -7.62 90)
+					(length 2.54)
+					(name "T"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 3.81 -7.62 90)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 8.89 0 180)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "FeatherSense_PushButton:_1"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -2751,6 +2918,16 @@
 	)
 	(wire
 		(pts
+			(xy 214.63 114.3) (xy 217.17 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "16de1c44-4a8a-43d9-bdc5-f2e434591c31")
+	)
+	(wire
+		(pts
 			(xy 203.2 71.12) (xy 203.2 54.61)
 		)
 		(stroke
@@ -2758,6 +2935,16 @@
 			(type default)
 		)
 		(uuid "1f6535be-7d35-40a4-a6f2-2d88ba88443b")
+	)
+	(wire
+		(pts
+			(xy 224.79 106.68) (xy 224.79 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "20a4e808-669d-4bff-ad06-2cd2e79fcaef")
 	)
 	(wire
 		(pts
@@ -2778,6 +2965,16 @@
 			(type default)
 		)
 		(uuid "27fc1788-a253-4760-bde6-9fdb727e6ef1")
+	)
+	(wire
+		(pts
+			(xy 217.17 116.84) (xy 214.63 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3240eaeb-33cd-4b39-bb3b-a3bfde89dc29")
 	)
 	(wire
 		(pts
@@ -2818,6 +3015,16 @@
 			(type default)
 		)
 		(uuid "45c04b07-0451-4eec-aa38-e5d4441a9e24")
+	)
+	(wire
+		(pts
+			(xy 217.17 118.11) (xy 217.17 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4b50a5b4-9f7f-4e8d-8f87-bae041d654ca")
 	)
 	(wire
 		(pts
@@ -2938,6 +3145,26 @@
 			(type default)
 		)
 		(uuid "71e4abb8-0dd4-4241-8bec-d7885fb52616")
+	)
+	(wire
+		(pts
+			(xy 224.79 127) (xy 224.79 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "73e09617-9b39-455c-92f0-e785630bd558")
+	)
+	(wire
+		(pts
+			(xy 214.63 121.92) (xy 217.17 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8210dda1-17cf-470c-8798-0cd431e34431")
 	)
 	(wire
 		(pts
@@ -3595,6 +3822,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 224.79 106.68 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "13d5a854-91ad-4bc1-865c-b3e09a9ae3ac")
+		(property "Reference" "#PWR011"
+			(at 224.79 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 224.79 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 224.79 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 224.79 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 224.79 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "18f345ba-f8bb-4d97-90b4-a1daf81e7025")
+		)
+		(instances
+			(project ""
+				(path "/70e40189-008f-4f72-8f4c-fe289f3548a4"
+					(reference "#PWR011")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+3V3")
 		(at 88.9 168.91 180)
 		(unit 1)
@@ -4016,6 +4309,72 @@
 			(project ""
 				(path "/70e40189-008f-4f72-8f4c-fe289f3548a4"
 					(reference "R1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 224.79 129.54 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "484e3c8d-41ad-4e52-b453-76d3c45e4897")
+		(property "Reference" "#PWR03"
+			(at 224.79 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 224.79 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 224.79 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 224.79 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 224.79 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e8257b27-9588-4fe0-97b5-53bef6120152")
+		)
+		(instances
+			(project ""
+				(path "/70e40189-008f-4f72-8f4c-fe289f3548a4"
+					(reference "#PWR03")
 					(unit 1)
 				)
 			)
@@ -4707,6 +5066,85 @@
 			(project ""
 				(path "/70e40189-008f-4f72-8f4c-fe289f3548a4"
 					(reference "Q2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "FeatherSense_JoyButton:08184_SparkFunk")
+		(at 224.79 118.11 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ba8404f0-d78f-4b7a-bd9f-9f98873d4cf5")
+		(property "Reference" "U1"
+			(at 232.41 117.4749 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "~"
+			(at 232.41 119.38 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 224.79 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 224.79 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 224.79 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "b637310a-4ba7-4511-bb76-4acdcba3ac10")
+		)
+		(pin ""
+			(uuid "f9e9ef5d-d987-428e-bae6-c4d8bacb99d4")
+		)
+		(pin ""
+			(uuid "6790344e-6688-4603-ba8b-7c723c59f3fe")
+		)
+		(pin ""
+			(uuid "6d047128-f514-42ba-8a9d-3375e780d307")
+		)
+		(pin ""
+			(uuid "4871591a-c716-484b-b3b3-55d7dc46f0aa")
+		)
+		(instances
+			(project ""
+				(path "/70e40189-008f-4f72-8f4c-fe289f3548a4"
+					(reference "U1")
 					(unit 1)
 				)
 			)
