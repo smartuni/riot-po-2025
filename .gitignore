@@ -1,0 +1,8 @@
+#Latex helper files
+*.toc
+*.gz
+*.log
+*.fls
+*.fdb_latexmk
+*.aux
+*.out
