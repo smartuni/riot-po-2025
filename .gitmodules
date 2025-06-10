@@ -1,3 +1,0 @@
-[submodule "nodes/RIOT"]
-	path = nodes/RIOT
-	url = https://github.com/smartuni/riot-fork-po-2025
