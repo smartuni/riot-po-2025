@@ -500,7 +500,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "gerbers/",
+      "plot": "gerber_v1_0/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
