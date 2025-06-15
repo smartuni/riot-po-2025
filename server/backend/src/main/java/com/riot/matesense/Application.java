@@ -5,6 +5,7 @@ import com.riot.matesense.entity.GateEntity;
 import com.riot.matesense.enums.Status;
 import com.riot.matesense.model.Gate;
 import com.riot.matesense.repository.GateRepository;
+import com.riot.matesense.service.DownlinkService;
 import com.riot.matesense.service.GateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -29,19 +30,24 @@ public class Application {
 
 @Component
 class PopulateTestDataRunner implements CommandLineRunner {
+
+	DownlinkService downlinkService;
 	GateService gateService;
 	GateRepository gateRepository;
 	@Autowired
-	public PopulateTestDataRunner(GateService gateService, GateRepository gateRepository) {
+	public PopulateTestDataRunner(GateService gateService, GateRepository gateRepository, DownlinkService downlinkService) {
 		this.gateService = gateService;
 		this.gateRepository = gateRepository;
+		this.downlinkService = downlinkService;
 	}
 	@Override
 	public void run(String... args) throws Exception {
 		List <Coordinate> coordinates = new ArrayList<>();
 		Coordinate coordinate = new Coordinate(23.000, 23.4444);
 		coordinates.add(coordinate);
-		GateEntity gate = new GateEntity(Status.CLOSED, new Timestamp(System.currentTimeMillis()), 1L, 53.540808,9.9654, "St.Pauli", false, true, null);
+		downlinkService.sendeDownlink(); // Test call
+
+		//GateEntity gate = new GateEntity(Status.CLOSED, new Timestamp(System.currentTimeMillis()), 1L, 53.540808,9.9654, "St.Pauli", false, true, null);
 //		GateEntity gate1 = new GateEntity(Status.CLOSED, new Timestamp(System.currentTimeMillis()), 2L, coordinates, "Landungsbrücken", false, true, null);
 //		GateEntity gate2 = new GateEntity(Status.OPEN, new Timestamp(System.currentTimeMillis()), 3L, coordinates, "Veddel", true, false, null);
 //		GateEntity gate3 = new GateEntity(Status.OPEN, new Timestamp(System.currentTimeMillis()), 4L, coordinates, "Hafen", true, true, null);
