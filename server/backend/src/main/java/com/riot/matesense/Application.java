@@ -1,9 +1,11 @@
 package com.riot.matesense;
 
+import com.riot.matesense.config.DownPayload;
 import com.riot.matesense.datatypes.Coordinate;
 import com.riot.matesense.entity.GateEntity;
 import com.riot.matesense.enums.Status;
 import com.riot.matesense.model.Gate;
+import com.riot.matesense.model.GateForDownlink;
 import com.riot.matesense.repository.GateRepository;
 import com.riot.matesense.service.DownlinkService;
 import com.riot.matesense.service.GateService;
@@ -16,7 +18,9 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootApplication
 @EntityScan(basePackages = "com.riot.matesense.entity")
@@ -45,7 +49,8 @@ class PopulateTestDataRunner implements CommandLineRunner {
 		List <Coordinate> coordinates = new ArrayList<>();
 		Coordinate coordinate = new Coordinate(23.000, 23.4444);
 		coordinates.add(coordinate);
-		downlinkService.sendeDownlink(); // Test call
+		//[1,247,[[187,0],[69,1]]]
+		//downlinkService.sendDownlinkToDevice(payload); // Test call
 
 		//GateEntity gate = new GateEntity(Status.CLOSED, new Timestamp(System.currentTimeMillis()), 1L, 53.540808,9.9654, "St.Pauli", false, true, null);
 //		GateEntity gate1 = new GateEntity(Status.CLOSED, new Timestamp(System.currentTimeMillis()), 2L, coordinates, "Landungsbrücken", false, true, null);

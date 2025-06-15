@@ -1,4 +1,6 @@
 package com.riot.matesense.service;
+
+import com.riot.matesense.config.DownPayload;
 import com.riot.matesense.config.MqttProperties;
 import com.riot.matesense.mqtt.TTNMqttPublisher;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,8 @@ public class DownlinkService {
         this.cborConverter = cborConverter;
         this.mqttProperties = mqttProperties;
     }
-//    @SuppressWarnings("unchecked")
+
+    //    @SuppressWarnings("unchecked")
 //    public void sendDownlinkToDevice(String deviceId, Map<String, Object> payloadData) {
 //        //TODO need to check the right time
 //        int timestamp = (int) Instant.now().getEpochSecond();
@@ -73,72 +76,33 @@ public class DownlinkService {
 //        }
 //    }
 
-//    public void sendDownlinkToDevice(String deviceId, Map<String, Object> payloadData) {
-//        //int timestamp = (int) Instant.now().getEpochSecond();
-//        //TODO add Timestamp into the payload [
-//        //    1,    # 1 is an example value for the message type
-//        //    247,  # Timestamp
-//        //    [     # The list with the "Soll Status" entries
-//        //        [ # This is a "Soll Status" entry
-//        //            187, # GateID
-//        //            0,   # Soll Status
-//        //        ],
-//        //        [ # 2nd "Soll Status" entry
-//        //            69,  # GateID
-//        //            1,   # Soll Status
-//        //        ]
-//        //        # ... More entries
-//        //    ]
-//        //]
-//        try {
-//            byte[] cbor = cborConverter.toCbor(payloadData);
-//            String base64 = Base64.getEncoder().encodeToString(cbor);
-//
-//            String topic = String.format("v3/%s@ttn/devices/%s/down/push", mqttProperties.getApplicationId(), deviceId);
-//
-//            String json = String.format("""
-//            {
-//              "downlinks": [
-//                {
-//                  "f_port": 15,
-//                  "frm_payload": "%s",
-//                  "priority": "NORMAL"
-//                }
-//              ]
-//            }
-//            """, base64);
-//
-//            mqttPublisher.publishDownlink(json.getBytes(), topic);
-//
-//        } catch (Exception e) {
-//            System.err.println("Fehler beim Senden des Downlinks: " + e.getMessage());
-//        }
-//    }
-    //example
-    public void sendeDownlink() {
+
+    public void sendDownlinkToDevice(DownPayload payloadData) {
         try {
-            //small payload examplee
+            // Wandlung des POJO in eine strukturierte Liste:
             List<Object> payload = Arrays.asList(
-                    1,
-                    247,
-                    Arrays.asList(
-                            Arrays.asList(187, 0),
-                            Arrays.asList(69, 1)
-                    )
-            ); // my payload that convert to a string base64
+                    payloadData.getMessageType(),
+                    payloadData.getTimestamp(),
+                    payloadData.getStatuses() // entspricht List<List<Integer>>
+            );
+
             byte[] cbor = cborConverter.toCbor(payload);
             String base64 = Base64.getEncoder().encodeToString(cbor);
+            System.out.println("BASE64 repr: " + base64);
+
             String json = String.format("""
-                {
-                  "downlinks": [
-                    {
-                      "f_port": 15,
-                      "frm_payload": "%s",
-                      "priority": "NORMAL"
-                    }
-                  ]
-                }
-                """, base64);
+      {
+        "downlinks": [
+          {
+            "f_port": 15,
+            "frm_payload":"%s",
+            "priority": "NORMAL"
+          }
+        ]
+      }
+      """, base64);
+
+            System.out.println("FINAL JSON: " + json);
 
             mqttPublisher.publishDownlink(json.getBytes(), mqttProperties.getPublishTopic());
         } catch (Exception e) {
@@ -146,5 +110,33 @@ public class DownlinkService {
         }
     }
 
+//    public void sendDownlinkToDevice(DownPayload payloadData) {
+//        try {
+//            byte[] cbor = cborConverter.toCbor(payloadData);
+//            String base64 = Base64.getEncoder().encodeToString(cbor);
+//
+//            System.out.println("BASE64 bytes[0]=" + (int) cbor[0] + " -> chars=");
+//            for (char c : base64.toCharArray()) {
+//                System.out.printf("%c(0x%02x) ", c, (int) c);
+//            }
+//            System.out.println();
+//            String topic = String.format("%s",
+//                    mqttProperties.getPublishTopic());
+//            String json = String.format("""
+//                    {
+//                      "downlinks": [
+//                        {
+//                          "f_port": 15,
+//                          "frm_payload":"%s",
+//                          "priority": "NORMAL"
+//                        }
+//                      ]
+//                    }
+//                    """, base64);
+//            System.out.println("FINAL JSON: " + json);
+//            mqttPublisher.publishDownlink(json.getBytes(), topic);
+//        } catch (Exception e) {
+//            System.err.println("Fehler beim Senden des Downlinks: " + e.getMessage());
+//        }
+//    }
 }
-
