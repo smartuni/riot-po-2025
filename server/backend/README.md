@@ -60,5 +60,5 @@ For more Information follow the link:
 ## Recent Updates
 
 - **2025‑06‑15**:
-    - Included a Downlink Service that needs to be tested with the Node team
+    - Included a Downlink Service that needs to be tested with the Node team.
 
