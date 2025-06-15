@@ -76,7 +76,6 @@ public class DownlinkService {
 //        }
 //    }
 
-
     public void sendDownlinkToDevice(DownPayload payloadData) {
         try {
             // Wandlung des POJO in eine strukturierte Liste:
