@@ -4,6 +4,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.riot.matesense.enums.Status;
+import com.riot.matesense.enums.ConfidenceQuality;
 import lombok.Getter;
 
 @Component
@@ -49,5 +50,30 @@ public class ConfidenceCalculator //retooled to work within existing framework
     public void subtractConfidence()
     {
         confidence -= 5; //subtract five percent every six hours
+    }
+
+
+    public ConfidenceQuality DetermineQuality {
+        
+        if (confidence >= 90){
+            return ConfidenceQuality.HIGH;
+        }
+
+        else if (confidence > 80 && confidence < 90){
+            return ConfidenceQuality.MED_HIGH;
+        }
+
+        else if (confidence > 70 && confidence < 80){
+            return ConfidenceQuality.MED;
+        }
+
+        else if (confidence > 60 && confidence < 70){
+            return ConfidenceQuality.MED_LOW;
+        }
+
+        else {
+            return ConfidenceQuality.LOW;
+        }
+
     }
 }
