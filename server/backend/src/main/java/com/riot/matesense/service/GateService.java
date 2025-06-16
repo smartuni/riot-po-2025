@@ -29,7 +29,7 @@ public class GateService {
         gates.forEach(e -> {
             Gate gate = new Gate(e.getId(), e.getDeviceId(), e.getLastTimeStamp(), e.getStatus(),
                     e.getLatitude(), e.getLongitude(), e.getLocation(), e.getSensorConfidence(),
-                    e.getWorkerConfidence(), e.getRequestedStatus());
+                    e.getWorkerConfidence(), e.getRequestedStatus(), e.getCalculator().getConfidence());
             customGates.add(gate);
         });
         return customGates;
@@ -39,7 +39,6 @@ public class GateService {
         gateRepository.save(gate);
         return gate.toString();
     }
-
 
     public void removeGate(GateEntity gate) throws GateNotFoundException {
         gateRepository.delete(gate);
@@ -57,6 +56,7 @@ public class GateService {
             gateEntity.setSensorConfidence(gate.getSensorConfidence());
             gateEntity.setWorkerConfidence(gate.getWorkerConfidence());
             gateEntity.setLocation(gate.getLocation());
+            gateEntity.getCalculator().updateConfidence(gate.getStatus());
             gateRepository.save(gateEntity);
         }
 
@@ -66,7 +66,7 @@ public class GateService {
         GateEntity gate = gateRepository.getById(id);
         return new Gate(gate.getId(), gate.getDeviceId(),gate.getLastTimeStamp(), gate.getStatus(),
                 gate.getLatitude(), gate.getLongitude(), gate.getLocation(), gate.getWorkerConfidence(),
-                gate.getSensorConfidence(), gate.getRequestedStatus());
+                gate.getSensorConfidence(), gate.getRequestedStatus(), gate.getCalculator().getConfidence());
     }
 
     public void requestGateStatusChange(Long gateId, String targetStatus) throws GateNotFoundException {
@@ -84,5 +84,4 @@ public class GateService {
         System.out.println(gate.getRequestedStatus());
         gateRepository.save(gate);
     }
-
 }

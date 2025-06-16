@@ -12,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @SpringBootApplication
 @EntityScan(basePackages = "com.riot.matesense.entity")
+@EnableScheduling
 public class Application {
 
 	public static void main(String[] args) {

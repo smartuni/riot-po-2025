@@ -10,12 +10,14 @@ import lombok.Setter;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.riot.matesense.service.ConfidenceCalculator;
 
 @Getter
 @Setter
 @Table(name = "gates")
 @Entity
 public class GateEntity {
+	ConfidenceCalculator calculator = new ConfidenceCalculator();
 	@Getter
 	@Setter
     @Id
@@ -31,7 +33,6 @@ public class GateEntity {
 	private Boolean sensorConfidence;
 	@Column(name = "requested_status")
 	private String requestedStatus;
-
 
 	public GateEntity(Status status, Timestamp lastTimeStamp,
 					  Long deviceId, Double latitude, Double longitude,

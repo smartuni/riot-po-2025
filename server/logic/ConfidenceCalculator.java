@@ -2,8 +2,8 @@ import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-package ConfidenceCalculator;
 
+/*
 public class Main {
 
     public static void main(String[] args) {
@@ -36,16 +36,8 @@ public class Main {
         scanner.close();
     }
 }
-
-
-
-
-
-
-
-
-
-public class ConfidenceCalculator {
+*/
+public class ConfidenceCalculator { // prototype/proof of concept for confidence calculator
     
     float confidence;
     String lastReport; 
@@ -58,11 +50,11 @@ public class ConfidenceCalculator {
         return confidence;
     }
     
-    public void SubtractConfidence {
+    public void SubtractConfidence() {
         if (!lastReport.equals("None") && !lastReport.equals("UNKNOWN")){
             confidence -= 0.5;
         }
-    }
+    };
     
     public float updateConfidence(String report)
     {
@@ -74,7 +66,7 @@ public class ConfidenceCalculator {
         else if (report.equals("OPEN") || report.equals("CLOSED"))
         {
             if(lastReport.equals("None")){
-                confidence = 0.5
+                confidence = 0.5;
             }
             else {
                 if(report.equals(lastReport)){
