@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 import com.riot.matesense.enums.Status;
 import lombok.Getter;
-import lombok.Setter;
 
 @Component
 public class ConfidenceCalculator //retooled to work within existing framework
