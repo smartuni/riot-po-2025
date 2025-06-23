@@ -12,12 +12,14 @@ public class ConfidenceCalculator //retooled to work within existing framework
 {
     @Getter
     int confidence;
+    boolean ignoreGate;
     Status gateStatusArray[];
     Status workerStatusArray[];
 
     public ConfidenceCalculator() //initialize an empty list of reports and set confidence to max
     {
         confidence = 100;
+        ignoreGate = false;
         for(int i = 0; i < 5; i++)
         {
             gateStatusArray[i] = Status.NONE;
@@ -47,7 +49,7 @@ public class ConfidenceCalculator //retooled to work within existing framework
         {
             for(int i = 0; i < 5; i++)
             {
-                int gateDelta = 10 - (2 * i); // gives newer reports more weight than older reports
+                int gateDelta = ignoreGate ? 0 : 10 - (2 * i); // if gate is flagged as faulty, ignore its reports
                 int workerDelta = 20 - (4 * i);
 
                 if (status == gateStatusArray[i] && gateStatusArray[i] != Status.NONE)
