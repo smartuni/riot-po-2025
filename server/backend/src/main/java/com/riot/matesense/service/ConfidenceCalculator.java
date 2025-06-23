@@ -86,7 +86,6 @@ public class ConfidenceCalculator //retooled to work within existing framework
         confidence -= 5; //subtract five percent every six hours
     }
 
-
     public ConfidenceQuality determineQuality() { // given a confidence number, report a keyword for the confidence (Qualitative, not just a number)
         
         if (confidence >= 90){
