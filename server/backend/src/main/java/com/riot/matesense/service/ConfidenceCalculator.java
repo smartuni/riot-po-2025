@@ -109,21 +109,21 @@ public class ConfidenceCalculator //retooled to work within existing framework
     }
 
 
-    public ConfidenceQuality DetermineQuality() {
+    public ConfidenceQuality determineQuality() {
         
         if (confidence >= 90){
             return ConfidenceQuality.HIGH;
         }
 
-        else if (confidence > 80 && confidence < 90){
+        else if (confidence >= 80 && confidence < 90){
             return ConfidenceQuality.MED_HIGH;
         }
 
-        else if (confidence > 70 && confidence < 80){
+        else if (confidence >= 70 && confidence < 80){
             return ConfidenceQuality.MED;
         }
 
-        else if (confidence > 60 && confidence < 70){
+        else if (confidence >= 60 && confidence < 70){
             return ConfidenceQuality.MED_LOW;
         }
 
