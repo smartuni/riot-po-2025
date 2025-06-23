@@ -74,29 +74,31 @@ public class ConfidenceCalculator //retooled to work within existing framework
         {
             for(int i = 0; i < 5; i++)
             {
+                int gateDelta = 10 - (2 * i);
+                int workerDelta = 20 - (4 * i);
                 if (status == gateStatusArray[i] && gateStatusArray[i] != Status.NONE)
                 {
-                    confidence += 10;
+                    confidence += gateDelta;
                 }
                 else
                 {
-                    confidence -= 10;
+                    confidence -= gateDelta;
                 }
 
                 if (status == workerStatusArray[i] && workerStatusArray[i] != Status.NONE)
                 {
-                    confidence += 15;
+                    confidence += workerDelta;
                 }
                 else
                 {
-                    confidence -= 15;
+                    confidence -= workerDelta;
                 }
             }
         }
 
         shuffleConfidence(status);
 
-        confidence = Math.max(0, confidence);
+        confidence = Math.max(0, confidence); // normalize confidence, between 0 and 100
         confidence = Math.min(100, confidence);
 
         return confidence;
