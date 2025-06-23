@@ -12,14 +12,12 @@ public class ConfidenceCalculator //retooled to work within existing framework
 {
     @Getter
     int confidence;
-    Status prevStatus;
     Status gateStatusArray[];
     Status workerStatusArray[];
 
-    public ConfidenceCalculator()
+    public ConfidenceCalculator() //initialize an empty list of reports and set confidence to max
     {
         confidence = 100;
-        prevStatus = Status.NONE;
         for(int i = 0; i < 5; i++)
         {
             gateStatusArray[i] = Status.NONE;
@@ -31,58 +29,34 @@ public class ConfidenceCalculator //retooled to work within existing framework
     {
         for(int i = 1; i < 5; i++)
         {
-            gateStatusArray[i] = gateStatusArray[i-1];
+            gateStatusArray[i] = gateStatusArray[i-1]; // push older reports to the back of the array
             workerStatusArray[i] = workerStatusArray[i-1];
         }
 
-        gateStatusArray[0] = status;
+        gateStatusArray[0] = status; // insert most recent report to the front of the array
         workerStatusArray[0] = status;
     }
 
     public int updateConfidence(Status status)
     {
-        if (status == Status.UNKNOWN)
+        if (status == Status.UNKNOWN || status == Status.NONE) //set confidence to max if status doesn't exist or is reported as unknown
         {
-            confidence = 100; //if we don't know, we're sure that we don't know
-        }
-        else
-        {
-            if(status == prevStatus) //update our confidence based on whether it matches the previous report
-            {
-                confidence += 50;
-            }
-            else
-            {
-                confidence -= 50;
-            }
-        }
-        prevStatus = status;
-
-        confidence = Math.max(0, confidence);
-        confidence = Math.min(100, confidence); // normalization, we can't be more than 100% sure or less than 0% sure of the gate's status
-
-        return confidence;
-    }
-
-    public int updateConfidenceArray(Status status)
-    {
-        if (status == Status.UNKNOWN || status == Status.NONE)
-        {
-            confidence = 100;
+            confidence = 100; //(if we don't know, we're sure that we don't know)
         }
         else
         {
             for(int i = 0; i < 5; i++)
             {
-                int gateDelta = 10 - (2 * i);
+                int gateDelta = 10 - (2 * i); // gives newer reports more weight than older reports
                 int workerDelta = 20 - (4 * i);
+
                 if (status == gateStatusArray[i] && gateStatusArray[i] != Status.NONE)
                 {
-                    confidence += gateDelta;
+                    confidence += gateDelta; // if new a report matches an older report, increase confidence
                 }
                 else
                 {
-                    confidence -= gateDelta;
+                    confidence -= gateDelta; // otherwise, decrease confidence
                 }
 
                 if (status == workerStatusArray[i] && workerStatusArray[i] != Status.NONE)
@@ -111,7 +85,7 @@ public class ConfidenceCalculator //retooled to work within existing framework
     }
 
 
-    public ConfidenceQuality determineQuality() {
+    public ConfidenceQuality determineQuality() { // given a confidence number, report a keyword for the confidence (Qualitative, not just a number)
         
         if (confidence >= 90){
             return ConfidenceQuality.HIGH;
