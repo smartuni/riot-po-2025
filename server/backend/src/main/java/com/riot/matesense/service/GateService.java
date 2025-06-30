@@ -29,8 +29,7 @@ public class GateService {
         List<GateEntity> gates = gateRepository.findAll();
         List<Gate> customGates = new ArrayList<>();
         gates.forEach(e -> {
-            System.out.println("getAll");
-            // changeConfidence(e, (int)(Math.random() * 100));
+            // changeConfidence(e, e.getConfidence());
             Gate gate = new Gate(e.getId(), e.getDeviceId(), e.getLastTimeStamp(), e.getStatus(),
                     e.getLatitude(), e.getLongitude(), e.getLocation(), e.getSensorConfidence(),
                     e.getWorkerConfidence(), e.getRequestedStatus(), e.getConfidence(), e.getQuality());
@@ -53,6 +52,7 @@ public class GateService {
         if (gateRepository.getById(gate.getId()) == null) {
             gateRepository.save(gate);
         } else {
+            gateEntity.setId(gate.getId());
             gateEntity.setRequestedStatus(gate.getRequestedStatus());
             gateEntity.setLastTimeStamp(gate.getLastTimeStamp());
             gateEntity.setDeviceId(gate.getDeviceId());
@@ -62,9 +62,9 @@ public class GateService {
             gateEntity.setLocation(gate.getLocation());
             gateEntity.setGateStatusArray(gate.getGateStatusArray());
             gateEntity.setWorkerStatusArray(gate.getWorkerStatusArray());
-            System.out.println("update");
             changeConfidence(gateEntity, gate.getConfidence());
             gateRepository.save(gateEntity);
+            System.out.println(gate.getId() + " " + gateEntity.getId());
         }
 
     }

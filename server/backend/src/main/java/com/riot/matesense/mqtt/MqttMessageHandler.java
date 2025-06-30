@@ -50,8 +50,10 @@ public class MqttMessageHandler {
                         newGate.setId(gateId);
                         newGate.setStatus(status);
 
-                            gateService.updateGate(newGate);
-                            System.out.println("Gate hinzugefügt: ID=" + gateId + ", Status=" + status);
+                        System.out.println("\n\n Gate Id: " + newGate.getId() + "\n\n");
+                        
+                        gateService.updateGate(newGate);
+                        System.out.println("Gate hinzugefügt: ID=" + gateId + ", Status=" + status);
                             /*
                         } catch (GateAlreadyExistingException e) {
                             System.out.println("Gate existiert bereits: ID=" + gateId);
