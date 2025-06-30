@@ -52,7 +52,6 @@ public class GateService {
         if (gateRepository.getById(gate.getId()) == null) {
             gateRepository.save(gate);
         } else {
-            gateEntity.setId(gate.getId());
             gateEntity.setRequestedStatus(gate.getRequestedStatus());
             gateEntity.setLastTimeStamp(gate.getLastTimeStamp());
             gateEntity.setDeviceId(gate.getDeviceId());
@@ -63,6 +62,7 @@ public class GateService {
             gateEntity.setGateStatusArray(gate.getGateStatusArray());
             gateEntity.setWorkerStatusArray(gate.getWorkerStatusArray());
             changeConfidence(gateEntity, gate.getConfidence());
+            gateEntity.setId(gate.getId());
             gateRepository.save(gateEntity);
             System.out.println(gate.getId() + " " + gateEntity.getId());
         }
