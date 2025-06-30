@@ -35,6 +35,8 @@ public class SecurityConfig {
                     // .anyRequest().permitAll()
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/gates").permitAll()
+                    .requestMatchers("/gate-activities").permitAll()
+                    .requestMatchers("/ws/**").permitAll()
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
