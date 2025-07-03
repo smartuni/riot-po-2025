@@ -5,7 +5,7 @@ APPLICATION = senseMate
 BOARD ?= feather-nrf52840-sense
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE ?= $(CURDIR)/../RIOT
+RIOTBASE ?= $(CURDIR)/../../RIOT
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
@@ -19,16 +19,18 @@ DEVELHELP ?= 1
 # This board requires a start sleep to actually catch the printed output
 USEMODULE += ztimer_sec
 
-# Include bluetooth stack
-include ../../ble/ble.inc.mk
-
-# Include other packages here e.g.
-# include ../../other_package/other_package.inc.mk
-
 # We use shell in this example
 USEMODULE += shell
 
+# Use our custom mate_ble module
+USEMODULE += mate_ble
+
+#Use our custom LoRaWAN Module
+USEMODULE += mate_lorawan
+
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
+
+EXTERNAL_MODULE_DIRS += ../../
 
 include $(RIOTBASE)/Makefile.include
