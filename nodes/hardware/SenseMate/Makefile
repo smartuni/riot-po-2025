@@ -23,7 +23,10 @@ USEMODULE += ztimer_sec
 USEMODULE += shell
 
 # Include pwm
-include pwm/pwm_custom.inc.mk
+include ../../pwm/pwm_custom.inc.mk
+
+SRC += main.c
+SRC += ../../pwm/pwm_custom.c
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1

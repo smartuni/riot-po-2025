@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "ztimer.h"
-#include "pwm/pwm_custom.h"
+#include "../../pwm/pwm_custom.h"
 
 int main(void)
 {
