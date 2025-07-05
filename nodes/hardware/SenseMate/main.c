@@ -9,6 +9,7 @@ int main(void)
 
     ztimer_sleep(ZTIMER_MSEC, 3000);
     puts("PWM starten");
+    // Pin 9 ist die LED1
     int result = execute_pwm(9, 7000U, PWM_RES);
     if(result == -1) {
         puts("Fehler");

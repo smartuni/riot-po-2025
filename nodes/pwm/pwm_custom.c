@@ -6,7 +6,7 @@ int execute_pwm(int pin, uint32_t duration, int frequency) {
     uint32_t start = ztimer_now(ZTIMER_MSEC);
     uint32_t time_passed = ztimer_now(ZTIMER_MSEC);
 
-    int channel = pin - 2;
+    int channel = pin - 7;
      // PWM initialisieren
     if (pwm_init(PWM_DEVI, channel, frequency, PWM_RES) != 0) {
         puts("PWM-Init fehlgeschlagen");
