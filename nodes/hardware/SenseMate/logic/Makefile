@@ -41,7 +41,7 @@ USEMODULE += tables
 
 USEMODULE += mate_lorawan
 
-
+USEMODULE += pwm
 
 CFLAGS += -DI2C_DEVICE_IDX=0
 CFLAGS += -DI2C_DISPLAY_ADDR=0x3c
