@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {fetchActivities, fetchGates, requestGateStatusChange} from "../services/api";
-import axios from "axios";
+import {fetchActivities, fetchGates, loadWorkerId, requestGateStatusChange, updateGatePriority} from "../services/api";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import api from "../services/api";
 import {
     TextField,
@@ -32,6 +33,26 @@ function StatusTables() {
     const [bulkRequestedStatus, setBulkRequestedStatus] = useState("");
     const [expandedGateId, setExpandedGateId] = useState(null);
     const [activities, setActivities] = useState([]);
+    const [workerId, setWorkerId] = useState(null);
+    const [selectedPriorities, setSelectedPriorities] = useState({});
+
+
+    useEffect(() => {
+        const loadDetails = async () => {
+            try {
+                const response = await api.get('/auth/user-details');
+                if (response.status !== 200) {
+                    throw new Error('Request failed with status code ' + response.status);
+                }
+                setWorkerId(response.data.workerId);
+            } catch (e) {
+                console.error("Fehler beim Laden der User-Details:", e);
+            }
+        };
+
+        loadDetails();
+    }, []);
+
 
     /**
      * Lädt die Gates beim ersten Rendern der Komponente.
@@ -46,6 +67,11 @@ function StatusTables() {
             }
         };
         loadGates();
+        const intervalId = setInterval(() => {
+            loadGates();
+        }, 300);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     /**
@@ -61,6 +87,11 @@ function StatusTables() {
             }
         };
         loadActivities();
+        const intervalId = setInterval(() => {
+            loadActivities();
+        }, 300);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     /**
@@ -82,23 +113,9 @@ function StatusTables() {
 
         const statusToSend = bulkRequestedStatus === "NONE" ? null : bulkRequestedStatus;
 
-        const gatesToUpdate = filteredGates.filter(gate => {
-            const currentRequested = gate.requestedStatus || null;
-            const currentStatus = gate.status;
-
-            // Gleicher Request? Ignorieren
-            if (currentRequested === statusToSend) return false;
-
-            // Status passt schon zum Ziel? Ignorieren
-            return !((statusToSend === "REQUESTED_OPEN" && currentStatus === "OPENED") ||
-                (statusToSend === "REQUESTED_CLOSE" && currentStatus === "CLOSED"));
-
-
-        });
-
-        const promises = gatesToUpdate.map(async (gate) => {
+        const promises = filteredGates.map(async (gate) => {
             try {
-                await requestGateStatusChange(gate.id, statusToSend);
+                await requestGateStatusChange(gate.id, workerId, bulkRequestedStatus);
             } catch (error) {
                 console.error(`Fehler beim Aktualisieren von Gate ${gate.id}`, error);
             }
@@ -108,6 +125,10 @@ function StatusTables() {
         const updated = await fetchGates();
         setGates(updated);
     };
+
+
+
+
 
     /**
      * Rendert den angeforderten Status für ein Gate.
@@ -119,6 +140,17 @@ function StatusTables() {
             case "REQUESTED_OPEN":
                 return <><LockOpenIcon fontSize="small"/> OPEN</>;
             case "REQUESTED_CLOSE":
+                return <><LockIcon fontSize="small"/> CLOSE</>;
+            default:
+                return <><CircleIcon fontSize="small"/> NONE</>;
+        }
+    };
+
+    const renderPendingJobs = (status) => {
+        switch (status) {
+            case "PENDING_OPEN":
+                return <><LockOpenIcon fontSize="small"/> OPEN</>;
+            case "PENDING_CLOSE":
                 return <><LockIcon fontSize="small"/> CLOSE</>;
             default:
                 return <><CircleIcon fontSize="small"/> NONE</>;
@@ -149,7 +181,7 @@ function StatusTables() {
         };
 
         const payload = [
-            1, // Type
+            0, // Type
             Math.floor(Date.now() / 1000), // Unix Timestamp
             filteredGates
                 .filter(g => g.requestedStatus in statusIntMap)
@@ -169,6 +201,30 @@ function StatusTables() {
             alert("Failed to send downlink.");
         }
     };
+
+    const handlePriorityChange = async (gateId, newPriority) => {
+        try {
+            await updateGatePriority(gateId, newPriority);
+
+            // Update die Anzeige sofort im Frontend
+            setGates(prevGates =>
+                prevGates.map(g =>
+                    g.id === gateId ? { ...g, priority: newPriority } : g
+                )
+            );
+
+            // Optional: selectedPriorities mitziehen, falls du das brauchst
+            setSelectedPriorities(prev => ({
+                ...prev,
+                [gateId]: newPriority
+            }));
+        } catch (error) {
+            console.error("Fehler beim Aktualisieren der Priorität:", error);
+            alert("Fehler beim Aktualisieren der Priorität.");
+        }
+    };
+
+
 
     /**
      * Berechnet die Zeit seit dem letzten Update eines Gates in einem lesbaren Format.
@@ -243,7 +299,7 @@ function StatusTables() {
                                 <MenuItem value="">None</MenuItem>
                                 <MenuItem value="REQUESTED_OPEN">Request Open</MenuItem>
                                 <MenuItem value="REQUESTED_CLOSE">Request Close</MenuItem>
-                                <MenuItem value="REQUESTED_NONE">Clear Request</MenuItem>
+                                <MenuItem value="REQUESTED_NONE">Clear All Requests</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -272,19 +328,18 @@ function StatusTables() {
                             <th>Location</th>
                             <th>Status</th>
                             <th>Requested Status</th>
-                            <th>Device ID</th>
+                            <th>Pending Jobs</th>
+                            <th>Priority</th>
                             <th>Last Update</th>
                             <th>Confidence</th>
                             <th>Actions</th>
+                            <th>Activities</th>
                         </tr>
                         </thead>
                         <tbody>
                         {filteredGates.map((gate) => (
                             <React.Fragment key={gate.id}>
-                                <tr
-                                    onClick={() => setExpandedGateId(expandedGateId === gate.id ? null : gate.id)}
-                                    style={{cursor: "pointer"}}
-                                >
+                                <tr>
                                     <td>{gate.id}</td>
                                     <td>
                                         {gate.location}<br/>
@@ -303,7 +358,29 @@ function StatusTables() {
                                             {renderRequestedStatus(gate.requestedStatus)}
                                         </span>
                                     </td>
-                                    <td>{gate.deviceId}</td>
+                                    <td>
+                                        <span className={`badge ${gate.pendingJob ? gate.pendingJob.toLowerCase() : 'none'}`}>
+                                            {renderPendingJobs(gate.pendingJob)}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <FormControl size="small" variant="outlined">
+                                            <Select
+                                                value={gate.priority ?? 0}
+                                                onChange={(e) => {
+                                                    const newPriority = parseInt(e.target.value);
+                                                    handlePriorityChange(gate.id, newPriority);
+                                                }}
+                                             variant="outlined">
+                                                {[0, 1, 2, 3].map((level) => (
+                                                    <MenuItem key={level} value={level}>
+                                                        {level}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+
+                                    </td>
                                     <td>
                                         <div>{getTimeAgo(gate.lastTimeStamp)}</div>
                                         <div className="date">{gate.lastUpdate}</div>
@@ -330,7 +407,7 @@ function StatusTables() {
                                             color="warning"
                                             size="small"
                                             onClick={(e) => {
-                                                e.stopPropagation();  // verhindert dass Zeilen-Click auch getriggert wird
+                                                e.stopPropagation();
                                                 setSelectedGate(gate);
                                                 setDialogOpen(true);
                                             }}
@@ -338,20 +415,33 @@ function StatusTables() {
                                             <SyncAltIcon/>
                                         </IconButton>
                                     </td>
+                                    <td>
+                                        <IconButton
+                                            onClick={() =>
+                                                setExpandedGateId(expandedGateId === gate.id ? null : gate.id)
+                                            }
+                                            size="small"
+                                            aria-label="expand row"
+                                        >
+                                            {expandedGateId === gate.id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                        </IconButton>
+                                    </td>
+
                                 </tr>
                                 {expandedGateId === gate.id && (
                                     <tr className="expanded-row">
-                                        <td colSpan={8} style={{ backgroundColor: "#f9f9f9" }}>
+                                        <td colSpan={10} style={{ backgroundColor: "#f9f9f9" }}>
                                             <div>
                                                 <strong>Activities</strong>
                                                 {activities
                                                     .filter(activity => activity.gateId === gate.id)
-                                                    .slice(-4) // Optional: nur die letzten 4 zeigen
-                                                    .map((activity, index) => (
+                                                    .slice(-4)
+                                                    .map(activity => (
                                                         <p key={activity.id}>
-                                                            <strong>{activity.lastTimeStamp}:</strong> {activity.message}
+                                                            <strong>{new Date(activity.lastTimeStamp).toLocaleString()}:</strong> {activity.message}
                                                         </p>
-                                                    ))}
+                                                    ))
+                                                }
                                                 {activities.filter(a => a.gateId === gate.id).length === 0 && (
                                                     <p>No activities available for this gate.</p>
                                                 )}

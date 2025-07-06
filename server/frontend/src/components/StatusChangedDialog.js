@@ -1,39 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     Button, MenuItem, TextField, Typography
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import { requestGateStatusChange } from "../services/api";
+import api, { requestGateStatusChange } from "../services/api";
 
 function StatusChangeDialog({ open, gate, onClose }) {
     const [requestedStatus, setRequestedStatus] = useState("");
+    const [workerId, setWorkerId] = useState(null);
+
+    useEffect(() => {
+        const loadDetails = async () => {
+            try {
+                const response = await api.get('/auth/user-details');
+                if (response.status !== 200) {
+                    throw new Error('Request failed with status code ' + response.status);
+                }
+                setWorkerId(response.data.workerId);
+            } catch (e) {
+                console.error("Fehler beim Laden der User-Details:", e);
+            }
+        };
+
+        loadDetails();
+    }, []);
 
     if (!gate) return null;
 
     const handleSubmit = async () => {
-        const currentStatus = gate.status?.toUpperCase();
-        const currentRequested = gate.requestedStatus?.toUpperCase();
-        const newRequested = requestedStatus?.toUpperCase();
-
-        if (
-            (newRequested === "REQUESTED_OPEN" && currentStatus === "OPENED") ||
-            (newRequested === "REQUESTED_CLOSE" && currentStatus === "CLOSED") ||
-            (newRequested === currentRequested)
-        ) {
-            console.warn("Kein Statuswechsel nötig.");
-            onClose();
-            setRequestedStatus("");
-            return;
-        }
         try {
-            await requestGateStatusChange(gate.id, requestedStatus)
+            await requestGateStatusChange(gate.id, workerId, requestedStatus);
         } catch (err) {
             console.error("Fehler beim Update:", err);
         }
+
         onClose();
         setRequestedStatus("");
+    };
+
+    const getStatusDisplay = (status) => {
+        switch (status?.toUpperCase()) {
+            case "OPENED":
+                return <><LockOpenIcon fontSize="small" /> OPEN</>;
+            case "CLOSED":
+                return <><LockIcon fontSize="small" /> CLOSED</>;
+            default:
+                return <>NONE</>;
+        }
     };
 
     return (
@@ -43,11 +58,16 @@ function StatusChangeDialog({ open, gate, onClose }) {
                 <Typography><strong>Gate:</strong> {gate.id}</Typography>
                 <Typography><strong>Location:</strong> {gate.location}</Typography>
                 <Typography>
-                    <strong>Current Status:</strong> {
-                    gate.status === "OPENED"
-                        ? <><LockOpenIcon fontSize="small" /> OPEN</>
-                        : <><LockIcon fontSize="small" /> CLOSED</>
-                }
+                    <strong>Current Status:</strong>{" "}
+                    <span className={`badge ${gate.status?.toLowerCase()}`}>
+                        {getStatusDisplay(gate.status)}
+                    </span>
+                </Typography>
+                <Typography>
+                    <strong>Requested Status:</strong>{" "}
+                    <span className={`badge ${gate.requestedStatus?.toLowerCase() || "none"}`}>
+                        {gate.requestedStatus || "none"}
+                    </span>
                 </Typography>
 
                 <TextField

@@ -54,6 +54,28 @@ export const fetchActivities = async () => {
     }
 };
 
+export const addActivities = async (newActivities) => {
+    try {
+        const response = await api.post(`/add-activities/`, newActivities);
+        return response.data;
+    } catch (error) {
+        console.error('Error adding activities:', error);
+        throw error;
+    }
+}
+
+export const loadWorkerId = async () => {
+    try {
+        const response = await api.get('/auth/user-details');
+        if (response.status !== 200) {
+            throw new Error('Request failed with status code ' + response.status);
+        }
+        return response.data.workerId;
+    } catch (e) {
+        console.error("Fehler beim Laden der User-Details:", e);
+    }
+};
+
 
 
 // Gate-Update mit besserer Fehlerbehandlung
@@ -68,10 +90,10 @@ export const updateGate = async (gateId, gate) => {
 };
 
 // Status-Änderung mit Token-Validierung
-export const requestGateStatusChange = async (gateId, status) => {
+export const requestGateStatusChange = async (gateId, workerId,status) => {
     try {
         const response = await api.post(
-            `/${gateId}/request-status-change`,
+            `/${gateId}/${workerId}/request-status-change/`,
             { requestedStatus: status }
         );
         return response.data;
@@ -90,6 +112,14 @@ export const markNotificationAsRead = async (notificationId) => {
         throw error;
     }
 };
+
+export const updateGatePriority = async (gateId, newPriority) => {
+    return await api.put(`/update-priority/${gateId}`, {
+        priority: newPriority
+    });
+};
+
+
 
 
 
