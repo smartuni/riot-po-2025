@@ -376,5 +376,8 @@ function StatusTables() {
         </div>
     );
 }
+/*
+ * StatusTables-Komponente exportieren, damit sie in anderen Teilen der Anwendung verwendet werden kann.
+ */
 
 export default StatusTables;
