@@ -534,25 +534,6 @@ function StatusTables() {
                                             </div>
                                         </td>
                                     </tr>
-                                    {expandedGateId === gate.id && (
-                                        <tr className="expanded-row">
-                                            <td colSpan={8} style={{ backgroundColor: "#f9f9f9" }}>
-                                                <div>
-                                                    <strong>Activities</strong>
-                                                    {activities
-                                                        .filter(activity => activity.gateId === gate.id)
-                                                        .slice(-4) // Optional: nur die letzten 4 zeigen
-                                                        .map((activity, index) => (
-                                                            <p key={activity.id}>
-                                                                <strong>{activity.lastTimeStamp}:</strong> {activity.message}
-                                                            </p>
-                                                        ))}
-                                                    {activities.filter(a => a.gateId === gate.id).length === 0 && (
-                                                        <p>No activities available for this gate.</p>
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
                                     )}
                                 </React.Fragment>
                             ))}
