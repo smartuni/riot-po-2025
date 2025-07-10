@@ -71,11 +71,11 @@ int main(void){
     }
 
     // start lorawan
-    puts("starting lorawan");
-    if (!start_lorawan()){
-        printf("starting lorawan failed");
-        return -1;
-    }
+    //puts("starting lorawan");
+    //if (!start_lorawan()){
+    //    printf("starting lorawan failed");
+    //    return -1;
+    //}
 
 
         //start thread init bluetooth
