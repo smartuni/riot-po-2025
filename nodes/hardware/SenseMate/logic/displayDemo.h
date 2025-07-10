@@ -16,4 +16,6 @@ extern void display_menu_header(char *text, int num_after_text, bool use_num);
 
 extern void new_page(void);
 
+bool next_page(void);
+
 #endif
