@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = sensegate
+APPLICATION = SenseGate
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= feather-nrf52840-sense
@@ -43,7 +43,7 @@ DEVELHELP ?= 1
 
 # Some workarounds are needed in order to get the tutorial running on
 # some computers.
-PREFLASH_DELAY=4
+PREFLASH_DELAY ?= 4
 
 BUILD_IN_DOCKER ?= 1
 
