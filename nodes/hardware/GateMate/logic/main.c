@@ -32,6 +32,7 @@ int main(void){
     // write to table
     puts("write to table");
     int timestamp = getTimestamp();
+    printf("time: %d\n", timestamp);
 
     is_state_entry table_entry;
     table_entry.gateID = GATE_ID;
@@ -112,10 +113,16 @@ int main(void){
         
         // TODO  error detection
         // err = check_door_status();
-
         increment_device_timestamp();
-        ztimer_sleep(1000);
+        ztimer_sleep(ZTIMER_MSEC, 1000);
 
+        is_state_entry table_entry;
+        table_entry.gateID = GATE_ID;
+        table_entry.state = initial_door_state();
+        table_entry.gateTime = get_device_timestamp();
+
+        if (TABLE_UPDATED == set_is_state_entry(&table_entry)){
+            printf("new timestamp: %d\n", table_entry.gateTime );
+        }
     }
-    return 0;
 }
