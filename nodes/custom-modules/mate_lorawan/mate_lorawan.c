@@ -226,9 +226,19 @@ static int _send_lorawan_packet(const netif_t *netif, int msg_no, int read)
 void *rx_thread(void *arg)
 {
     (void)arg;
+
     msg_t msg;
     /* initialize the message queue] */
     msg_init_queue(_rx_msg_queue, QUEUE_SIZE);
+
+    /* find the LoRaWAN network interface and connect */
+    netif = _find_lorawan_network_interface();
+    if (netif == NULL) {
+        puts("[LoRaWAN]: No network interface found");
+        return NULL;
+    }
+    _join_lorawan_network(netif);
+
     while (1) {
         /* wait until we get a message]*/
         msg_receive(&msg);
@@ -339,14 +349,6 @@ int start_lorawan(void)
     
     /* Sleep so that we do not miss this message while connecting */
     ztimer_sleep(ZTIMER_SEC, 3);
-
-    /* find the LoRaWAN network interface and connect */
-    netif = _find_lorawan_network_interface();
-    if (netif == NULL) {
-        puts("[LoRaWAN]: No network interface found");
-        return -1;
-    }
-    _join_lorawan_network(netif);
 
     printf("[LoRaWAN]: Starting receive thread\n");
     /* create the reception thread] */
