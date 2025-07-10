@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = displayTest
+APPLICATION = SenseMate
 # If no BOARD is found in the environment, use this default:
 BOARD ?= adafruit-feather-nrf52840-sense
 
@@ -27,6 +27,7 @@ USEMODULE += ztimer_sec
 USEPKG += u8g2
 USEMODULE += periph_i2c
 
+USEMODULE += periph_pwm
 USEMODULE += periph_gpio
 USEMODULE += periph_gpio_irq
 
