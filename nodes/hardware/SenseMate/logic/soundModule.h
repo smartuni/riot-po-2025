@@ -1,16 +1,27 @@
 #ifndef SOUNDMODULE_H
 #define SOUNDMODULE_H
 
-void init_sound_module(void);
+#include <stdint.h>
 
-void downlink_reveived_sound(void);
+typedef struct {
+    uint16_t freq;
+    uint16_t t_ms;
+} beep_t;
 
-void uplink_sent_sound(void);
+typedef struct {
+    beep_t *beeps;
+    unsigned len;
+} beep_sequence_t;
 
-void ble_reveived_sound(void);
+extern beep_sequence_t sound_startup;
+extern beep_sequence_t sound_downlink_rx;
+extern beep_sequence_t sound_uplink_tx;
+extern beep_sequence_t sound_ble_rx;
+extern beep_sequence_t sound_ble_rx_news;
+extern beep_sequence_t sound_ble_tx;
 
-void ble_sent_sound(void);
+void sound_module_init(void);
 
-void startup_sound(void);
-
+void sound_play(beep_sequence_t *bs);
+void sound_play_blocking(beep_sequence_t *bs);
 #endif // SOUNDMODULE_H
