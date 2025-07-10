@@ -37,8 +37,7 @@
  * MATE_BLE_SCAN_INTERVAL_MS = MATE_BLE_SCAN_WINDOW_MS results in continuous scanning.*/
 #define MATE_BLE_SCAN_INTERVAL_MS    30
 
-#define MATE_BLE_THRESHOLD_MAX  (128)
-#define MATE_BLE_THRESHOLD_MIN  (-100)
+#define MATE_BLE_THRESHOLD_MIN  (-70)
 
 static uint8_t id_addr_type;
 static uint8_t init = 0;
@@ -181,8 +180,8 @@ static void start_adv(uint8_t *payload, unsigned payload_len)
     rc = ble_gap_ext_adv_start(MATE_BLE_NIMBLE_INSTANCE, 0, 1);
     assert (rc == 0);
 
-    printf("Now advertising\n");
-    print_hex_arr(payload, payload_len);
+    //printf("Now advertising\n");
+    //print_hex_arr(payload, payload_len);
 }
 
 static void print_hex_arr(const uint8_t *data, unsigned len)
@@ -304,11 +303,11 @@ int ble_send(cbor_buffer* cbor_packet)
         sign_payload(cbor_packet->buffer + packet_offset, cbor_packet->package_size[i],encode_outbuf,&encoded_ptr, &encoded_len);
         // update the payload with the given message
         
+        printf("start adv\n");
         start_adv(encoded_ptr, encoded_len);
 
         // Block here until the ADV_COMPLETE event posts the sem
         sem_wait(&adv_done_sem);
-
         ble_gap_ext_adv_stop(MATE_BLE_NIMBLE_INSTANCE);
 
         packet_offset += cbor_packet->package_size[i];
