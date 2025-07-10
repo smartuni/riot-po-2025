@@ -11,6 +11,10 @@
 #include "cbor.h"
 #include "container.h"
 #include "atomic_utils.h"
+/* only enable on SenseMates */
+#if DEVICE_TYPE == 1
+#include "events_creation.h"
+#endif
 
 // Return Codes
 #define TABLE_SUCCESS           0
@@ -528,7 +532,9 @@ int set_target_state_entry(const target_state_entry* entry) {
 }
 
 int set_is_state_entry(const is_state_entry* entry) {
-    printf("Called: set_is_state_entry\n");
+    printf("[TABLES] set_is_state_entry: ID = %d, state = %d, time = %d\n",
+            entry->gateID, entry->state, entry->gateTime);
+
     if (entry == NULL) {
         return TABLE_ERROR_INVALID_GATE_ID;
     }
@@ -541,12 +547,20 @@ int set_is_state_entry(const is_state_entry* entry) {
     mutex_lock(&is_state_mutex);
     int res = TABLE_NO_UPDATES;
     if (!is_is_state_entry_present_internal(gate_id)) {
+/* only enable on SenseMates */
+#if DEVICE_TYPE == 1
+        event_post(EVENT_PRIO_HIGHEST, &eventBleRxNews);
+#endif
         // Entry doesn't exist yet, add it
         is_state_entry_count++;
         is_state_entry_table[gate_id] = *entry;
         res = TABLE_UPDATED;
     }
     else if (is_state_entry_table[gate_id].gateTime < entry->gateTime) {
+/* only enable on SenseMates */
+#if DEVICE_TYPE == 1
+        event_post(EVENT_PRIO_HIGHEST, &eventBleRx);
+#endif
         // New entry is newer, update ours
         is_state_entry_table[gate_id] = *entry;
         res = TABLE_UPDATED;
