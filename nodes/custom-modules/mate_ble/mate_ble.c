@@ -384,10 +384,15 @@ void* ble_receive_loop(void* args)
             buffer.capacity
             );
 
-        int res = cbor_to_table_test(&buffer, metadata.rssi);
-        //if (MATE_BLE_THRESHOLD_MIN >= metadata.rssi && MATE_BLE_THRESHOLD_MAX <= metadata.rssi) {
-        //    continue;
-        //}
+        int res = TABLE_NO_UPDATES;
+
+        if (MATE_BLE_THRESHOLD_MIN >= metadata.rssi) {
+            printf("ignoring due to weak RX\n");
+            continue;
+        } else {
+            res = cbor_to_table_test(&buffer, metadata.rssi);
+        }
+
         if (thr_args != NULL) {
             if (thr_args->receive_queue != NULL && TABLE_UPDATED == res) {
                 event_post(thr_args->receive_queue, thr_args->receive_event);
