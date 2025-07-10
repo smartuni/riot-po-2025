@@ -16,7 +16,8 @@ extern event_t eventA0;
 extern event_t eventA1;
 extern event_t eventA3;
 extern event_t eventNews;
-extern event_t eventBleNews;
+extern event_t eventBleRx;
+extern event_t eventBleRxNews;
 extern event_t event_reactivate;
 
 extern void init_event(void);

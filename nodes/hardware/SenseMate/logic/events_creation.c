@@ -32,7 +32,6 @@ void event_handler_reactivate(event_t *event)
     
 }
 
-
 void event_handlerA0(event_t *event)
 {
     (void) event;   /* Not used */
@@ -85,37 +84,30 @@ void event_handlerA3(event_t *event)
 void event_handlerNews(event_t *event)
 {
     (void) event;   /* Not used */
-    if(event_accepted){
-        puts("got news");
-        start_vibration();
-        update_menu_from_tables();
-        downlink_reveived_sound();
-        //ble_reveived_sound();
-        event_timeout_set(&reactivate, 250); // Set a timeout to allow reactivation
-        stop_vibration();
-    }else{
-        puts("XXXX event news ignored");
-    }
+    update_menu_from_tables();
+    sound_play(&sound_downlink_rx);
+    vibration_pattern(&vibration_three_pulses);
 }
 
-void event_handlerBleNews(event_t *event)
+void event_handlerBleRx(event_t *event)
 {
     (void) event;   /* Not used */
-    if(event_accepted){
-        puts("got ble news");
-        start_vibration();
-        update_menu_from_tables();
-        ble_reveived_sound();
-        event_timeout_set(&reactivate, 250); // Set a timeout to allow reactivation
-        stop_vibration();
-    }else{
-        puts("XXXX event ble news ignored");
-    }
+    sound_play(&sound_ble_rx);
+}
+
+void event_handlerBleRxNews(event_t *event)
+{
+    (void) event;   /* Not used */
+    update_menu_from_tables();
+    update_menu_display();
+    sound_play(&sound_ble_rx_news);
+    vibration_pattern(&vibration_three_pulses);
 }
 
 event_t eventA0 = { .handler = event_handlerA0 };
 event_t eventA1 = { .handler = event_handlerA1 };
 event_t eventA3 = { .handler = event_handlerA3 };
 event_t eventNews = { .handler = event_handlerNews };
-event_t eventBleNews = { .handler = event_handlerBleNews };
+event_t eventBleRx = { .handler = event_handlerBleRx };
+event_t eventBleRxNews = { .handler = event_handlerBleRxNews };
 event_t event_reactivate = { .handler = event_handler_reactivate };
