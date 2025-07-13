@@ -836,30 +836,38 @@ const timestamp_entry* get_timestamp_table(void) {
 
 int target_state_table_to_cbor_many_test(target_state_entry table[], int package_size, cbor_buffer* buffer) {
     printf("Entered function\n");
+    target_state_entry_count = 5;
     // Assert: given package_size big enough
-    if(BASE_CBOR_BYTE_SIZE + CBOR_TARGET_STATE_MAX_BYTE_SIZE > package_size) {
+    if(BASE_CBOR_BYTE_SIZE_BLE + CBOR_TARGET_STATE_MAX_BYTE_SIZE > package_size) {
         printf("ASSERT failed. Size passed too small for cbor!\n");
-        printf("%d + %d < %d\n", BASE_CBOR_BYTE_SIZE, CBOR_TARGET_STATE_MAX_BYTE_SIZE, package_size);
+        printf("%d + %d < %d\n", BASE_CBOR_BYTE_SIZE_BLE, CBOR_TARGET_STATE_MAX_BYTE_SIZE, package_size);
         return -1;
     }
 
+    int no_entries_in_stream = (package_size - BASE_CBOR_BYTE_SIZE_BLE) / CBOR_TARGET_STATE_MAX_BYTE_SIZE;
     int no_cbor_packages = 0;
     int cbor_stream_index = 0;
     int size_of_current_cbor = 0;
     int table_index = 0;
     printf("This is the buffer: %p\n", buffer->buffer);
-    while(table_index < 4) {
-        printf("enterd while, i = %d, size = %d\n", table_index, size_of_current_cbor);
+    while(table_index < target_state_entry_count) {
+        printf("enterd while, index = %d, size = %d\n", table_index, size_of_current_cbor);
         CborEncoder encoder, arrayEncoder, entriesEncoder, singleEntryEncoder;
         uint8_t* space = (buffer->buffer) + (cbor_stream_index * sizeof(uint8_t));
         printf("Space = %p\n", space);
         printf("CBOR Index = %d\n", cbor_stream_index);
         cbor_encoder_init(&encoder, space, sizeof(uint8_t) * package_size, 0);
-        cbor_encoder_create_array(&encoder, &arrayEncoder, 2); // [
+        cbor_encoder_create_array(&encoder, &arrayEncoder, 5); // [
         cbor_encode_int(&arrayEncoder, TARGET_STATE_KEY); // Entry 1
-        cbor_encoder_create_array(&arrayEncoder, &entriesEncoder, 6); // Entry 2
+        cbor_encode_int(&arrayEncoder, device_timestamp); // Entry 2
+        cbor_encode_int(&arrayEncoder, DEVICE_TYPE); // Entry 3
+        cbor_encode_int(&arrayEncoder, DEVICE_ID); // Entry 4
+        if(table_index + no_entries_in_stream > target_state_entry_count) {
+            no_entries_in_stream = table_index - no_entries_in_stream;
+        }
+        cbor_encoder_create_array(&arrayEncoder, &entriesEncoder, no_entries_in_stream); // Entry 2
         printf("while %d + %d < %d\n", size_of_current_cbor, CBOR_TARGET_STATE_MAX_BYTE_SIZE, package_size);
-        while(size_of_current_cbor + CBOR_TARGET_STATE_MAX_BYTE_SIZE < package_size) {
+        for(int i = 0; i < no_entries_in_stream; i++) {
             //validate table entry
             if(table[table_index].gateID != MAX_GATE_COUNT) {
                 cbor_encoder_create_array(&entriesEncoder, &singleEntryEncoder, 3); // []
@@ -885,7 +893,7 @@ int target_state_table_to_cbor_many_test(target_state_entry table[], int package
 
 int target_state_table_to_cbor_many(int package_size, cbor_buffer* buffer) {
     // Assert: given package_size big enough
-    if(BASE_CBOR_BYTE_SIZE + CBOR_TARGET_STATE_MAX_BYTE_SIZE > package_size) {
+    if(BASE_CBOR_BYTE_SIZE_BLE + CBOR_TARGET_STATE_MAX_BYTE_SIZE > package_size) {
         printf("ASSERT failed. Size passed too small for cbor!\n");
         return -1;
     }

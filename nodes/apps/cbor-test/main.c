@@ -12,10 +12,10 @@
 int test_target_to_cbor(cbor_buffer* buf) {
     puts("Starting encode CBOR Test");
 
-    target_state_entry e1 = {4, 2, 2000};
-    target_state_entry e2 = {5, 0, 2801};
+    target_state_entry e1 = {1, 2, 2000};
+    target_state_entry e2 = {2, 0, 2801};
     target_state_entry e3 = {3, 1, 2051};
-    target_state_entry e4 = {8 , 0, 2401};
+    target_state_entry e4 = {4, 0, 2401};
     
     target_state_entry test[] = {e1, e2, e3, e4};
     puts("Made test object");
@@ -70,15 +70,16 @@ int test_cbor_to_target(cbor_buffer* buf) {
 
 int test_targ_to_cbor_many(cbor_buffer* buf) {
     puts("Starting encode CBOR many Test");
-    target_state_entry e1 = {4, 2, 2000};
-    target_state_entry e2 = {5, 0, 2801};
+    target_state_entry e1 = {1, 2, 2000};
+    target_state_entry e2 = {2, 0, 2801};
     target_state_entry e3 = {3, 1, 2051};
-    target_state_entry e4 = {8, 0, 2401};
-    target_state_entry test[] = {e1, e2, e3, e4};
+    target_state_entry e4 = {4, 0, 2401};
+    target_state_entry e5 = {5, 1, 2001};
+    target_state_entry test[] = {e1, e2, e3, e4, e5};
 
     puts("Made test object");        
 
-    int no_pack = target_state_table_to_cbor_many_test(test, 22, buf);
+    int no_pack = target_state_table_to_cbor_many_test(test, 25, buf);
     puts("Used function");
 
     printf("Return is: %d\n", no_pack);
@@ -108,11 +109,11 @@ int main(void)
     buf->buffer = (uint8_t*) malloc(sizeof(uint8_t) * 100);
     buf->package_size = (uint8_t*) malloc(sizeof(uint8_t) * 100);
 
-    test_target_to_cbor(buf);
+    //test_target_to_cbor(buf);
 
     //test_cbor_to_target(&buf);
 
-    // test_targ_to_cbor_many(&buf);
+    test_targ_to_cbor_many(&buf);
 
     free(buf->buffer);
     free(buf->package_size);

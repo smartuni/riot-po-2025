@@ -68,12 +68,13 @@
     #define JOBS_TABLE_NEW_RECORD                       JOBS_TABLE_BASE         | TABLE_NEW_RECORD
     #define JOBS_TABLE_NEW_RECORD_AND_UPDATE            JOBS_TABLE_BASE         | TABLE_NEW_RECORD_AND_UPDATE
 
-    #define BASE_CBOR_BYTE_SIZE 0x05
-    #define CBOR_TARGET_STATE_MAX_BYTE_SIZE (0x06)
-    #define CBOR_IS_STATE_MAX_BYTE_SIZE (0x06)
-    #define CBOR_SEEN_STATUS_MAX_BYTE_SIZE (0x07)
-    #define CBOR_JOBS_MAX_BYTE_SIZE (0x03)
-    #define CBOR_TIMESTAMP_MAX_BYTE_SIZE (0x06)
+    #define BASE_CBOR_BYTE_SIZE_BLE 0x0B
+    #define BASE_CBOR_BYTE_SIZE_LWN 0x03
+    #define CBOR_TARGET_STATE_MAX_BYTE_SIZE (0x09)
+    #define CBOR_IS_STATE_MAX_BYTE_SIZE (0x09)
+    #define CBOR_SEEN_STATUS_MAX_BYTE_SIZE (0x0B)
+    #define CBOR_JOBS_MAX_BYTE_SIZE (0x05)
+    #define CBOR_TIMESTAMP_MAX_BYTE_SIZE (0x09)
 
     #define GATE_NODE 0x00
     #define SENSEMATE_NODE 0x01
@@ -82,7 +83,7 @@
     typedef struct {
         uint8_t gateID;
         uint8_t state;
-        int timestamp;
+        uint32_t timestamp;
     } target_state_entry;
 
     typedef struct {
@@ -93,7 +94,7 @@
 
     typedef struct {
         uint8_t gateID;
-        int gateTime;
+        uint32_t gateTime;
         uint8_t status;
         uint8_t senseMateID;
     } seen_status_entry;
