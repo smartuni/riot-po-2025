@@ -186,7 +186,7 @@ static void start_adv(uint8_t *payload, unsigned payload_len)
     rc = ble_gap_ext_adv_start(MATE_BLE_NIMBLE_INSTANCE, 0, 1);
     assert (rc == 0);
 
-    printf("Now advertising\n");
+    //printf("Now advertising\n");
     //print_hex_arr(payload, payload_len);
 }
 
@@ -391,51 +391,51 @@ void* ble_receive_loop(void* args)
             continue;
         }
 
-        printf("BLE: receive\n"
-            "metadata\n"
-            "\t.type %d\n"
-            "\t.rssi %d\n"
-            "buffer\n"
-            "\t.buffer %d\n"
-            "\t.cbor_size %d\n"
-            "\t.buffer_size[0] %d\n"
-            "\t.capacity %d\n",
-            metadata.message_type,
-            metadata.rssi,
-            (int)buffer.buffer,
-            buffer.cbor_size,
-            buffer.package_size[0],
-            buffer.capacity
-        );
+        //printf("BLE: receive\n"
+        //    "metadata\n"
+        //    "\t.type %d\n"
+        //    "\t.rssi %d\n"
+        //    "buffer\n"
+        //    "\t.buffer %d\n"
+        //    "\t.cbor_size %d\n"
+        //    "\t.buffer_size[0] %d\n"
+        //    "\t.capacity %d\n",
+        //    metadata.message_type,
+        //    metadata.rssi,
+        //    (int)buffer.buffer,
+        //    buffer.cbor_size,
+        //    buffer.package_size[0],
+        //    buffer.capacity
+        //);
 
         int table_result = cbor_to_table_test(&buffer, metadata.rssi);
-        printf("cbor_to_table_test result: %d\n", table_result);
+        //printf("cbor_to_table_test result: %d\n", table_result);
         if (metadata.rssi < MATE_BLE_THRESHOLD){
             continue;
         }
         
-        printf("BLE: receive success\n"
-            "metadata\n"
-            "\t.type %d\n"
-            "\t.rssi %d\n"
-            "buffer\n"
-            "\t.buffer %d\n"
-            "\t.cbor_size %d\n"
-            "\t.buffer_size[0] %d\n"
-            "\t.capacity %d\n",
-            metadata.message_type,
-            metadata.rssi,
-            (int)buffer.buffer,
-            buffer.cbor_size,
-            buffer.package_size[0],
-            buffer.capacity
-        );
+        //printf("BLE: receive success\n"
+        //    "metadata\n"
+        //    "\t.type %d\n"
+        //    "\t.rssi %d\n"
+        //    "buffer\n"
+        //    "\t.buffer %d\n"
+        //    "\t.cbor_size %d\n"
+        //    "\t.buffer_size[0] %d\n"
+        //    "\t.capacity %d\n",
+        //    metadata.message_type,
+        //    metadata.rssi,
+        //    (int)buffer.buffer,
+        //    buffer.cbor_size,
+        //    buffer.package_size[0],
+        //    buffer.capacity
+        //);
 
         if (thr_args != NULL) {
             if ((thr_args->receive_queue != NULL) && (table_result & TABLE_NEW_RECORD_AND_UPDATE)) {
-                printf("Posting event to receive queue\n");
+                //printf("Posting event to receive queue\n");
                 event_post(thr_args->receive_queue, thr_args->receive_event);
-                printf("Event posted that table was updated\n");
+                //printf("Event posted that table was updated\n");
             }
 #if DEVICE_TYPE == 1 // only for SenseMate            
             else{
