@@ -45,6 +45,9 @@
 #include "events_creation.h"
 #endif
 
+#define ENABLE_DEBUG 0
+#include "debug.h"
+
 /* Interval between data transmissions, in seconds */
 #define SEND_INTERVAL_SEC 1
 /* Size of reception message queue */
@@ -135,7 +138,7 @@ static netif_t *_find_lorawan_network_interface(void)
     do {
         netif = netif_iter(netif);
         if (netif == NULL) {
-            puts("[LoRaWAN]: No network interface found.");
+            DEBUG("[LoRaWAN]: No network interface found.");
             break;
         }
         netif_get_opt(netif, NETOPT_DEVICE_TYPE, 0, &device_type, sizeof(device_type));
@@ -153,7 +156,7 @@ static int _join_lorawan_network(const netif_t *netif)
 
     while (joinAttempts < 5) {
         status = NETOPT_ENABLE;
-        printf("[LoRaWAN]: Joining LoRaWAN network...\n");
+        DEBUG("[LoRaWAN]: Joining LoRaWAN network...\n");
         ztimer_now_t timeout = ztimer_now(ZTIMER_SEC);
         netif_set_opt(netif, NETOPT_LINK, 0, &status, sizeof(status));
 
@@ -163,13 +166,13 @@ static int _join_lorawan_network(const netif_t *netif)
 
             netif_get_opt(netif, NETOPT_LINK, 0, &status, sizeof(status));
             if (status == NETOPT_ENABLE) {
-                printf("[LoRaWAN]: Joined network successfully.\n");
+                DEBUG("[LoRaWAN]: Joined network successfully.\n");
                 /* Set the data rate */
                 netif_set_opt(netif, NETOPT_LORAWAN_DR, 0, &data_rate, sizeof(data_rate));
                 /* Disable uplink confirmation requests */
                 status = NETOPT_DISABLE;
                 netif_set_opt(netif, NETOPT_ACK_REQ, 0, &status, sizeof(status));
-                printf("[LoRaWAN]: Uplink confirmation requests disabled.\n");
+                DEBUG("[LoRaWAN]: Uplink confirmation requests disabled.\n");
                 return 0;
             }
         }
@@ -182,7 +185,7 @@ static int _join_lorawan_network(const netif_t *netif)
 static int _send_lorawan_packet(const netif_t *netif, int msg_no, int read)
 {
     assert(netif != NULL);
-    printf("[LoRaWAN]: Sending LoRaWAN package.\n");
+    DEBUG("[LoRaWAN]: Sending LoRaWAN package.\n");
     int result;
     gnrc_pktsnip_t *packet;
     gnrc_pktsnip_t *header;
@@ -190,23 +193,23 @@ static int _send_lorawan_packet(const netif_t *netif, int msg_no, int read)
     uint8_t address = 1;
     msg_t msg;
 
-    printf("[LoRaWAN]: Package size: %d\n", cbor_send_buffer.package_size[msg_no]);
+    DEBUG("[LoRaWAN]: Package size: %d\n", cbor_send_buffer.package_size[msg_no]);
     print_hex_arr(cbor_send_buffer.buffer + read, cbor_send_buffer.package_size[msg_no]);
     packet = gnrc_pktbuf_add(NULL, cbor_send_buffer.buffer + read, cbor_send_buffer.package_size[msg_no], GNRC_NETTYPE_UNDEF);
     if (packet == NULL) {
-        puts("[LoRaWAN]: Failed to create packet.");
+        DEBUG("[LoRaWAN]: Failed to create packet.");
         return -1;
     }
 
     if (gnrc_neterr_reg(packet) != 0) {
-        puts("[LoRaWAN]: Failed to register for error reporting.");
+        DEBUG("[LoRaWAN]: Failed to register for error reporting.");
         gnrc_pktbuf_release(packet);
         return -1;
     }
 
     header = gnrc_netif_hdr_build(NULL, 0, &address, sizeof(address));
     if (header == NULL) {
-        puts("[LoRaWAN]: Failed to create header.");
+        DEBUG("[LoRaWAN]: Failed to create header.");
         gnrc_pktbuf_release(packet);
         return -1;
     }
@@ -217,7 +220,7 @@ static int _send_lorawan_packet(const netif_t *netif, int msg_no, int read)
 
     result = gnrc_netif_send(container_of(netif, gnrc_netif_t, netif), packet);
     if (result < 1) {
-        printf("[LoRaWAN]: Error unable to send.\n");
+        DEBUG("[LoRaWAN]: Error unable to send.\n");
         gnrc_pktbuf_release(packet);
         return -1;
     }
@@ -225,27 +228,34 @@ static int _send_lorawan_packet(const netif_t *netif, int msg_no, int read)
     /* wait for transmission confirmation */
     msg_receive(&msg);
     if (msg.type != GNRC_NETERR_MSG_TYPE) {
-        printf("[LoRaWAN]: Error unexpected message type %" PRIu16 ".\n", msg.type);
+        DEBUG("[LoRaWAN]: Error unexpected message type %" PRIu16 ".\n", msg.type);
         return -1;
     }
     if (msg.content.value != GNRC_NETERR_SUCCESS) {
-        printf("[LoRaWAN]: Error unable to send, error: (%" PRIu32 ").\n", msg.content.value);
+        DEBUG("[LoRaWAN]: Error unable to send, error: (%" PRIu32 ").\n", msg.content.value);
         return -1;
     }
 
     return 0;
 }
 
-void *rx_thread(void *arg)
+static void *rx_thread(void *arg)
 {
     (void)arg;
     msg_t msg;
     /* initialize the message queue] */
     msg_init_queue(_rx_msg_queue, QUEUE_SIZE);
+
+    /* receive LoRaWAN packets in our reception thread] */
+    gnrc_netreg_entry_t entry = GNRC_NETREG_ENTRY_INIT_PID(GNRC_NETREG_DEMUX_CTX_ALL, thread_getpid());
+    gnrc_netreg_register(GNRC_NETTYPE_UNDEF, &entry);
+    DEBUG("[LoRaWAN]: Start up succesful.\n");
+
     while (1) {
+        DEBUG("### wait for msg...\n");
         /* wait until we get a message]*/
         msg_receive(&msg);
-
+        DEBUG("### got msg\n");
         if (msg.type == GNRC_NETAPI_MSG_TYPE_RCV) {
             gnrc_pktsnip_t *pkt = msg.content.ptr;
             _handle_received_packet(pkt);
@@ -257,7 +267,7 @@ void *rx_thread(void *arg)
 
 static void _handle_received_packet(gnrc_pktsnip_t *pkt)
 {
-    printf("[LoRaWAN]: Received package from TTN.\n");
+    DEBUG("[LoRaWAN]: Received package from TTN.\n");
     assert(pkt != NULL);
     gnrc_pktsnip_t *snip = pkt;
     cbor_buffer received_buffer;
@@ -278,9 +288,9 @@ static void _handle_received_packet(gnrc_pktsnip_t *pkt)
                     
                         event_post(EVENT_PRIO_MEDIUM, &eventNews);
 #endif
-                printf("[LoRaWAN]: Downlink received and table updated.\n");
+                DEBUG("[LoRaWAN]: Downlink received and table updated.\n");
             }else{
-                printf("[LoRaWAN]: Error updating table.\n");
+                DEBUG("[LoRaWAN]: Error updating table.\n");
             }
         }
         snip = snip->next;
@@ -297,25 +307,25 @@ static void send_handler_timeout(event_t *event){
 }
 
 static void send_handler_is_state_table(event_t *event){
-    printf("Handler called\n");
+    DEBUG("Handler called\n");
     (void) event;
     int pkg_count = is_state_table_to_cbor_many_to_server(SEND_BUFFER_SIZE, &cbor_send_buffer);
-    printf("Table to cbor successful\n");
+    DEBUG("Table to cbor successful\n");
     
     if (pkg_count == 0){
-        printf("[LoRaWAN]: Nothing to send.\n");
+        DEBUG("[LoRaWAN]: Nothing to send.\n");
         return;
     }
     int read = 0;
-    printf("[LoRaWAN]: Sending %d packages ...\n", pkg_count);
-    puts("");
+    DEBUG("[LoRaWAN]: Sending %d packages ...\n", pkg_count);
+    DEBUG(" ");
     int result = 0;
     for (int msg_no = 0; msg_no < pkg_count; msg_no++){
         result = _send_lorawan_packet(netif, msg_no, read);
         if (result != 0) {
-            puts("[LoRaWAN]: Failed to send packet.");
+            DEBUG("[LoRaWAN]: Failed to send packet.");
         } else {
-            printf("[LoRaWAN]: Sent packet successfully.\n");
+            DEBUG("[LoRaWAN]: Sent packet successfully.\n");
         }
         read += cbor_send_buffer.package_size[msg_no];
     }
@@ -325,19 +335,19 @@ static void send_handler_seen_status_table(event_t *event){
     (void) event;
     int pkg_count = seen_status_table_to_cbor_many_to_server(SEND_BUFFER_SIZE, &cbor_send_buffer);
     if (pkg_count == 0){
-        printf("[LoRaWAN]: Nothing to send.\n");
+        DEBUG("[LoRaWAN]: Nothing to send.\n");
         return;
     }
     int read = 0;
-    printf("[LoRaWAN]: Sending %d packages ...\n", pkg_count);
-    puts("");
+    DEBUG("[LoRaWAN]: Sending %d packages ...\n", pkg_count);
+    DEBUG(" ");
     int result = 0;
     for (int msg_no = 0; msg_no < pkg_count; msg_no++){
         result = _send_lorawan_packet(netif, msg_no, read);
         if (result != 0) {
-            puts("[LoRaWAN]: Failed to send packet.");
+            DEBUG("[LoRaWAN]: Failed to send packet.");
         } else {
-            printf("[LoRaWAN]: Sent packet successfully.\n");
+            DEBUG("[LoRaWAN]: Sent packet successfully.\n");
         }
         read += cbor_send_buffer.package_size[msg_no];
     }
@@ -347,7 +357,7 @@ int start_lorawan(void)
 {
     /* Sleep so that we do not miss this message while connecting */
     ztimer_sleep(ZTIMER_SEC, 3);
-    printf("[LoRaWAN]: Starting module.\n");
+    DEBUG("[LoRaWAN]: Starting module.\n");
     //event_queue_init(&lorawan_queue);
     
     cbor_send_buffer.buffer = send_buffer;
@@ -359,36 +369,32 @@ int start_lorawan(void)
     event_timeout_set(&event_timeout, TIMEOUT_DURATION);
     
     /* Sleep so that we do not miss this message while connecting */
-    ztimer_sleep(ZTIMER_SEC, 3);
+    //ztimer_sleep(ZTIMER_SEC, 3);
 
     /* find the LoRaWAN network interface and connect */
     netif = _find_lorawan_network_interface();
     if (netif == NULL) {
-        puts("[LoRaWAN]: No network interface found.");
+        DEBUG("[LoRaWAN]: No network interface found.");
         return -1;
     }
     if(_join_lorawan_network(netif) == -1){
-        printf("[LoRaWAN]: Joining LoRaWAN failed.");
+        DEBUG("[LoRaWAN]: Joining LoRaWAN failed.");
         return -1;
     }
 
-    printf("[LoRaWAN]: Starting receive thread.\n");
+    DEBUG("[LoRaWAN]: Starting receive thread.\n");
     /* create the reception thread] */
     kernel_pid_t rx_pid = thread_create(_rx_thread_stack, sizeof(_rx_thread_stack),
-                                        THREAD_PRIORITY_MAIN - 1,
+                                        THREAD_PRIORITY_MAIN - 5,
                                         THREAD_CREATE_STACKTEST, rx_thread, NULL,
                                         "lorawan_rx");
     if (-EINVAL == rx_pid) {
-        puts("[LoRaWAN]: Failed to create reception thread.");
+        DEBUG("[LoRaWAN]: Failed to create reception thread.");
         return -1;
     }else{
-        printf("[LoRaWAN]: Receive thread started successfully.\n");
+        DEBUG("[LoRaWAN]: Receive thread started successfully.\n");
     }
 
-    /* receive LoRaWAN packets in our reception thread] */
-    gnrc_netreg_entry_t entry = GNRC_NETREG_ENTRY_INIT_PID(GNRC_NETREG_DEMUX_CTX_ALL, rx_pid);
-    gnrc_netreg_register(GNRC_NETTYPE_UNDEF, &entry);
-    printf("[LoRaWAN]: Start up succesful.\n");
     return 0;
 }
 
