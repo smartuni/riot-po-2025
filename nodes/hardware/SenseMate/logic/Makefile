@@ -45,6 +45,14 @@ USEMODULE += tables
 USEMODULE += mate_lorawan
 USEMODULE += mate_ble
 
+# Some workarounds are needed in order to get the tutorial running on
+# some computers.
+PREFLASH_DELAY ?= 4
+
+
+CFLAGS += -DCONFIG_LORAMAC_DEFAULT_RX1_DELAY=990
+CFLAGS += -DCONFIG_LORAMAC_DEFAULT_MIN_RX_SYMBOLS=20
+CFLAGS += -DNIMBLE_CONTROLLER_PRIO=THREAD_PRIORITY_MAIN-2
 
 
 CFLAGS += -DDEVICE_ID=$(RIOT_CONFIG_DEVICE_ID) #Device ID- change when flashing

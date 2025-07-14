@@ -332,13 +332,13 @@ int cbor_to_table_test(cbor_buffer* buffer, int8_t rssi) {
     seen_status_entry returnSeenTable[buffer->cbor_size];
     jobs_entry returnJobsTable[buffer->cbor_size];
 
-    if (buffer->cbor_size != 1) {
-        return -1;
-    }
+    // if (buffer->cbor_size != 1) {
+    //     return -1;
+    // }
 
     cbor_parser_init(buffer->buffer, buffer->package_size[0], 0, &parser, &value);
 
-    if(cbor_value_enter_container(&value, &wrapperValue) != CborNoError) {
+    if(!cbor_value_is_container(&value) || cbor_value_enter_container(&value, &wrapperValue) != CborNoError) {
         return -30;
     }
 
@@ -400,7 +400,7 @@ int cbor_to_table_test(cbor_buffer* buffer, int8_t rssi) {
 
     // [ enter second container
     cbor_value_advance(&wrapperValue);
-    if(cbor_value_enter_container(&wrapperValue, &fieldsValue) != CborNoError) {
+    if(!cbor_value_is_container(&wrapperValue) || cbor_value_enter_container(&wrapperValue, &fieldsValue) != CborNoError) {
         return -12;
     }
     
@@ -408,7 +408,9 @@ int cbor_to_table_test(cbor_buffer* buffer, int8_t rssi) {
     size_t length = 0;
     cbor_value_get_array_length(&wrapperValue, &length); 	
     for(size_t i = 0; i < length; i++) {
-        cbor_value_enter_container(&fieldsValue, &entryValue); // [
+        if(!cbor_value_is_container(&fieldsValue) ||cbor_value_enter_container(&fieldsValue, &entryValue) != CborNoError){
+            return -27;
+        } 
         switch(tableType) {
             case TARGET_STATE_KEY:
                 if(!cbor_value_is_integer(&entryValue) || cbor_value_get_int(&entryValue, &id) != CborNoError) {
