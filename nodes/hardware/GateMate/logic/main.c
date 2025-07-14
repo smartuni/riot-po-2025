@@ -59,7 +59,6 @@ int main(void){
         printf("starting lorawan failed");
     }
 
-
         //start thread init bluetooth
     puts("starting ble");
     if (BLE_SUCCESS == ble_init()){
@@ -72,7 +71,7 @@ int main(void){
     thread_create(
         ble_send_stack,
         sizeof(ble_send_stack),
-        THREAD_PRIORITY_MAIN - 2,
+        THREAD_PRIORITY_MAIN + 3,
         THREAD_CREATE_STACKTEST,
         ble_send_loop,
         NULL,
@@ -82,7 +81,7 @@ int main(void){
      thread_create(
          ble_reicv_stack,
          sizeof(ble_reicv_stack),
-         THREAD_PRIORITY_MAIN - 3,
+         THREAD_PRIORITY_MAIN + 2,
          THREAD_CREATE_STACKTEST,
          ble_receive_loop,
          NULL,
