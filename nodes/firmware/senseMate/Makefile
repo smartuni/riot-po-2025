@@ -55,6 +55,11 @@ CFLAGS += -DU8G2_DISPLAY_INIT_FUNC=u8g2_Setup_ssd1306_i2c_128x64_noname_f
 CFLAGS += -DEVENT_THREAD_HIGHEST_STACKSIZE=1024*3
 CFLAGS += -DEVENT_THREAD_MEDIUM_STACKSIZE=1024*3
 
+# If you need ~200 ms of pure hardware listening at SF7 (1 ms/symbol):
+CFLAGS += -DCONFIG_LORAMAC_DEFAULT_MIN_RX_SYMBOLS=200  
+# Keep the same ±200 ms software guard if you like
+CFLAGS += -DCONFIG_LORAMAC_DEFAULT_SYSTEM_MAX_RX_ERROR=50
+
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1

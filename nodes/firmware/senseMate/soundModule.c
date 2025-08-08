@@ -185,7 +185,7 @@ void init_sound_module(void) {
     // Initialize the sound module
     gpio_init(sound, sound_mode);
     gpio_clear(sound);
-    thread_create(thread_stack, sizeof(thread_stack), THREAD_PRIORITY_MAIN - 1,
+    thread_create(thread_stack, sizeof(thread_stack), THREAD_PRIORITY_MAIN - 2,
                   THREAD_CREATE_STACKTEST, thread_sound_function, NULL, "sound_thread");
     printf("Sound module initialized.\n");
 }

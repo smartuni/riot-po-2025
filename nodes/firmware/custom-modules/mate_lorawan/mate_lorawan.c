@@ -371,7 +371,7 @@ int start_lorawan(void)
     printf("[LoRaWAN]: Starting receive thread.\n");
     /* create the reception thread] */
     kernel_pid_t rx_pid = thread_create(_rx_thread_stack, sizeof(_rx_thread_stack),
-                                        THREAD_PRIORITY_MAIN - 1,
+                                        THREAD_PRIORITY_MAIN - 5,
                                         THREAD_CREATE_STACKTEST, rx_thread, NULL,
                                         "lorawan_rx");
     if (-EINVAL == rx_pid) {
