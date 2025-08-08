@@ -70,13 +70,13 @@ int insert_message(const uint8_t* data, size_t data_len, ble_metadata_t metadata
 
 int remove_message(cbor_message_type_t message_type, cbor_buffer* cbor_packet, ble_metadata_ptr_t metadata) 
 {
-    bool any_type = message_type == CBOR_MESSAGE_TYPE_WILDCARD;
+    bool is_wildcard = message_type == CBOR_MESSAGE_TYPE_WILDCARD;
 
     // Lock the mutex before accessing the message list
     mutex_lock(&list_mutex);
     for (int i = 0; i < MATE_BLE_INCOMING_LIST_SIZE; i++) {
         bool type_match = incoming_messages[i].metadata.message_type == message_type;
-        if ((type_match || any_type) && 
+        if ((type_match || is_wildcard) && 
             incoming_messages[i].cbor_packet.buffer != NULL) {
             cbor_packet->cbor_size = incoming_messages[i].cbor_packet.cbor_size;
             cbor_packet->package_size[0] = incoming_messages[i].cbor_packet.package_size[0];

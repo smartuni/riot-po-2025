@@ -355,7 +355,7 @@ int start_lorawan(void)
 
     void event_timeout_init(event_timeout_t *event_timeout, event_queue_t *queue, event_t *event);
     /* Init timeout event */
-    event_timeout_init(&event_timeout, EVENT_PRIO_HIGHEST, (event_t*)&send_event_timeout);
+    event_timeout_init(&event_timeout, EVENT_PRIO_MEDIUM, (event_t*)&send_event_timeout);
     event_timeout_set(&event_timeout, TIMEOUT_DURATION);
     
     /* Sleep so that we do not miss this message while connecting */
